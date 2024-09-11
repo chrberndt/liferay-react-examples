@@ -5,7 +5,7 @@ import { ClayIconSpriteContext } from '@clayui/icon';
 import icons from './icons.svg';
 import { ClayPaginationBarWithBasicItems } from '@clayui/pagination-bar';
 
-const App = () => {
+const AddressTable = () => {
 
     function handlePageChange(page) {
         console.log('handlePageChange()');
@@ -53,7 +53,7 @@ const App = () => {
         // { key: "street2", label:"Street 2"}, 
         // { key: "street3", label:"Street 3"}, 
         // { key: "type", label:"Type"}, 
-        { key: "zip", label: "ZIP Code" },
+        { key: "zip", label: "ZIP Code" }
     ];
 
     const [column, setColumn] = useState('');
@@ -186,4 +186,4 @@ const App = () => {
     );
 };
 
-export default App;
+export default AddressTable;
