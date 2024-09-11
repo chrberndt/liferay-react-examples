@@ -1,0 +1,14 @@
+liferay-react-examples main {
+  background-color: #fafafa;
+  height: 100vh;
+  color: var(--color-neutral-1);
+}
+
+liferay-react-examples .lexicon-icon {
+  height: .8em;
+  width: .8em;
+}
+
+.table-sort thead th .component-action, .table-sort thead td .component-action {
+  font-size: 1rem;
+}
