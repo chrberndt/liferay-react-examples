@@ -1,5 +1,5 @@
 # liferay-react-examples
-Explore and demonstrate how to use react with Liferay
+Explore and demonstrate how to use React with Liferay
 
 ## Prerequisites
 
@@ -117,6 +117,15 @@ Enter the following addresses
 
 Adjust clientId, clientSecret in `App.tsx` to your settings
 
+### Setup an OAuth application in Liferay
+
+As "Client Profile" select "Headless Server"
+
+
+### Grant CORS Access to the Account's Address Endpoint
+
+At System Settings -> Security Tools -> Portal Cross-Origin Resource Sharing (CORS)
+
 ## How To Use
 
 ```bash
@@ -125,7 +134,3 @@ cd liferay-react-examples
 npm install
 npm run start
 ````
-
-
-
-
