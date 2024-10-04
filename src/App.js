@@ -4,8 +4,9 @@ import { useResource } from '@clayui/data-provider';
 import { ClayIconSpriteContext } from '@clayui/icon';
 import icons from './icons.svg';
 import { ClayPaginationBarWithBasicItems } from '@clayui/pagination-bar';
+import PropTypes from 'prop-types';
 
-const AddressTable = () => {
+const AddressTable = ({...props}) => {
 
     function handlePageChange(page) {
         console.log('handlePageChange()');
@@ -64,25 +65,20 @@ const AddressTable = () => {
     const [totalItems, setTotalItems] = useState(0);
     const [value, setValue] = useState('');
 
-    // TODO: read addressEndpoint from properties
-    const addressEndpoint = "http://localhost:8080/o/headless-commerce-admin-account/v1.0/accounts/46944/accountAddresses";
-
-    // TODO: read clientId from properties
-    const clientId = "id-355f4fb2-cdcb-11cf-71e0-41ae7faaed8e";
-    // TODO: read clientSecret from properties
-    const clientSecret = "secret-5d39bdc7-3424-1577-6155-345acdf5fb36";
-    const grantType = "client_credentials";
-    // TODO: read tokenEndpoint from properties
-    const tokenEndpoint = "http://localhost:8080/o/oauth2/token";
+    // const addressEndpoint = props.addressEndpoint;
+    // const clientId = props.clientId;
+    // const clientSecret = props.clientSecret;
+    // const grantType = props.grantType;
+    // const tokenEndpoint = props.tokenEndpoint;
 
     const {resource, refetch } = useResource({
 
         fetch: async (link) => {
 
-            const tokenData = await fetch(tokenEndpoint, 
+            const tokenData = await fetch(props.tokenEndpoint, 
               {
                 method: 'POST',
-                body: 'grant_type=' + grantType + '&client_id=' + clientId + '&client_secret=' + clientSecret,
+                body: 'grant_type=' + props.grantType + '&client_id=' + props.clientId + '&client_secret=' + props.clientSecret,
                 headers: {
                   'Content-Type': 'application/x-www-form-urlencoded'
                 }
@@ -122,7 +118,7 @@ const AddressTable = () => {
             };
 
         },
-        link: addressEndpoint,
+        link: props.addressEndpoint,
         variables: {search: value, rows: delta, offset: offset, sort: column, order: direction},
     });
 
@@ -179,6 +175,15 @@ const AddressTable = () => {
             </ClayIconSpriteContext.Provider>
         </>
     );
+};
+
+AddressTable.propTypes = {
+    addressEndpoint: PropTypes.string, 
+    apiKey: PropTypes.string,
+    clientId: PropTypes.string,
+    clientSecret: PropTypes.string,
+    grantType: PropTypes.string,
+    tokenEndpoint: PropTypes.string,
 };
 
 export default AddressTable;
