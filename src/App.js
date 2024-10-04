@@ -75,7 +75,6 @@ const AddressTable = () => {
     // TODO: read tokenEndpoint from properties
     const tokenEndpoint = "http://localhost:8080/o/oauth2/token";
 
-
     const {resource, refetch } = useResource({
 
         fetch: async (link) => {
@@ -114,8 +113,6 @@ const AddressTable = () => {
                   }
                 }
               ).then(response => response.json());
-        
-            // console.log('addressData: ' + JSON.stringify(addressData));
 
             setTotalItems(addressData.totalCount);
 
@@ -128,8 +125,6 @@ const AddressTable = () => {
         link: addressEndpoint,
         variables: {search: value, rows: delta, offset: offset, sort: column, order: direction},
     });
-
-    // console.log('resource: ' + JSON.stringify(resource));
 
     return (
         <>
@@ -168,7 +163,7 @@ const AddressTable = () => {
                         <Head items={columns}>
                             {(column) => <Cell key={column.key} sortable>{column.label}</Cell>}
                         </Head>
-                        {resource && resource.length > 1 && (
+                        {resource && resource.length > 0 && (
                             <Body items={resource}>
                                 {(row) => (
                                     <Row id={row['id']} onClick={handleSelect} items={columns} property={JSON.stringify(row)} >
