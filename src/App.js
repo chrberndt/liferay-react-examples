@@ -122,8 +122,6 @@ const AddressTable = ({...props}) => {
                     }
                 ).then(response => response.json());
 
-                console.log(JSON.stringify(addressData));
-
                 setTotalItems(addressData.totalRecords);
 
                 return {
