@@ -39,21 +39,21 @@ const AddressTable = ({...props}) => {
 
     const columns = [
         { key: "countryISOCode", label: "Country Code" },
-        // { key: "defaultBilling", label:"Default Billing"}, 
-        // { key: "defaultShipping", label:"Default Shipping"}, 
-        // { key: "description", label:"Description"}, 
+        // { key: "defaultBilling", label:"Default Billing"},
+        // { key: "defaultShipping", label:"Default Shipping"},
+        // { key: "description", label:"Description"},
         // { key: "externalReferenceCode", label: "External Reference Code" },
         // { key: "id", label: "ID" },
-        // { key: "latitude", label:"Latitude"}, 
-        // { key: "longitude", label:"Longitude"}, 
+        // { key: "latitude", label:"Latitude"},
+        // { key: "longitude", label:"Longitude"},
         { key: "name", label: "Name" },
         // { key: "phoneNumber", label: "Phone Number" },
         // { key: "regionISOCode", label: "Region Code" },
         { key: "city", label: "City" },
         { key: "street1", label: "Street 1" },
-        // { key: "street2", label:"Street 2"}, 
-        // { key: "street3", label:"Street 3"}, 
-        // { key: "type", label:"Type"}, 
+        // { key: "street2", label:"Street 2"},
+        // { key: "street3", label:"Street 3"},
+        // { key: "type", label:"Type"},
         { key: "zip", label: "ZIP Code" }
     ];
 
@@ -120,8 +120,8 @@ const AddressTable = ({...props}) => {
             setTotalItems(addressData.totalCount);
 
             return {
-                cursor: addressData.totalCount, 
-                items: addressData.items, 
+                cursor: addressData.totalCount,
+                items: addressData.items,
             };
 
         },
@@ -176,7 +176,7 @@ const AddressTable = ({...props}) => {
                             </Body>
                         )}
                     </Table>
-    
+
                 </div>
             </ClayIconSpriteContext.Provider>
         </>
@@ -184,7 +184,7 @@ const AddressTable = ({...props}) => {
 };
 
 AddressTable.propTypes = {
-    addressEndpoint: PropTypes.string, 
+    addressEndpoint: PropTypes.string,
     apiKey: PropTypes.string,
     clientId: PropTypes.string,
     clientSecret: PropTypes.string,
