@@ -100,6 +100,13 @@ const AddressTable = ({...props}) => {
                         }
                     }
                     ).then(response => response.json());
+
+                setTotalItems(addressData.totalCount);
+
+                return {
+                    cursor: addressData.totalCount,
+                    items: addressData.items,
+                };
             }
 
             if (!isOauth && props.apiKey != undefined) {
@@ -115,14 +122,16 @@ const AddressTable = ({...props}) => {
                     }
                 ).then(response => response.json());
 
+                console.log(JSON.stringify(addressData));
+
+                setTotalItems(addressData.totalRecords);
+
+                return {
+                    cursor: addressData.totalRecords,
+                    items: addressData.results,
+                };
+
             }
-
-            setTotalItems(addressData.totalCount);
-
-            return {
-                cursor: addressData.totalCount,
-                items: addressData.items,
-            };
 
         },
         link: props.addressEndpoint,
