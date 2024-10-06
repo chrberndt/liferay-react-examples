@@ -65,50 +65,57 @@ const AddressTable = ({...props}) => {
     const [totalItems, setTotalItems] = useState(0);
     const [value, setValue] = useState('');
 
-    // const addressEndpoint = props.addressEndpoint;
-    // const clientId = props.clientId;
-    // const clientSecret = props.clientSecret;
-    // const grantType = props.grantType;
-    // const tokenEndpoint = props.tokenEndpoint;
+    const isOauth = (props.clientId != undefined
+        && props.clientSecret != undefined
+        && props.grantType != undefined
+        && props.tokenEndpoint != undefined);
 
     const {resource, refetch } = useResource({
 
         fetch: async (link) => {
 
-            const tokenData = await fetch(props.tokenEndpoint, 
-              {
-                method: 'POST',
-                body: 'grant_type=' + props.grantType + '&client_id=' + props.clientId + '&client_secret=' + props.clientSecret,
-                headers: {
-                  'Content-Type': 'application/x-www-form-urlencoded'
-                }
-              }).then(response => response.json());
-        
-            const token = tokenData.access_token;
-        
-            // console.log('token: ' + token);
+            let token = undefined;
+            let addressData = undefined;
 
-            // const addressData = await fetch( // Request addressData using an apiKey
-            //         link,
-            //     {
-            //       headers: {
-            //         'x-api-key': props.apiKey,
-            //         'Accept': 'application/json',
-            //         'Content-Type': 'application/json'
-            //       }
-            //     }
-            //   ).then(response => response.json());
-        
-            const addressData = await fetch( // Request addressData using the access token
-                link,
-                {
-                  headers: {
-                    'Authorization': 'Bearer ' + token,
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                  }
-                }
-              ).then(response => response.json());
+            // Obtain Oauth2 access taken
+            if (isOauth) {
+                const tokenData = await fetch(props.tokenEndpoint,
+                    {
+                        method: 'POST',
+                        body: 'grant_type=' + props.grantType + '&client_id=' + props.clientId + '&client_secret=' + props.clientSecret,
+                        headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                        }
+                    }).then(response => response.json());
+
+                    token = tokenData.access_token;
+
+                // Request addressData using the access token
+                addressData = await fetch(link,
+                    {
+                        headers: {
+                            'Authorization': 'Bearer ' + token,
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                    ).then(response => response.json());
+            }
+
+            if (!isOauth && props.apiKey != undefined) {
+
+                // Request addressData using an apiKey
+                addressData = await fetch(link,
+                    {
+                    headers: {
+                        'x-api-key': props.apiKey,
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                    }
+                ).then(response => response.json());
+
+            }
 
             setTotalItems(addressData.totalCount);
 
@@ -168,7 +175,6 @@ const AddressTable = ({...props}) => {
                                 )}
                             </Body>
                         )}
-
                     </Table>
     
                 </div>

@@ -4,8 +4,9 @@ import { useResource } from '@clayui/data-provider';
 import { ClayIconSpriteContext } from '@clayui/icon';
 import icons from './icons.svg';
 import { ClayPaginationBarWithBasicItems } from '@clayui/pagination-bar';
+import PropTypes from 'prop-types';
 
-const AddressTable = () => {
+const AddressTable = ({...props}) => {
 
     function handlePageChange(page) {
         console.log('handlePageChange()');
@@ -64,58 +65,57 @@ const AddressTable = () => {
     const [totalItems, setTotalItems] = useState(0);
     const [value, setValue] = useState('');
 
-    // TODO: read addressEndpoint from properties
-    const addressEndpoint = "http://localhost:8080/o/headless-commerce-admin-account/v1.0/accounts/46944/accountAddresses";
-
-    // TODO: read clientId from properties
-    const clientId = "id-355f4fb2-cdcb-11cf-71e0-41ae7faaed8e";
-    // TODO: read clientSecret from properties
-    const clientSecret = "secret-5d39bdc7-3424-1577-6155-345acdf5fb36";
-    const grantType = "client_credentials";
-    // TODO: read tokenEndpoint from properties
-    const tokenEndpoint = "http://localhost:8080/o/oauth2/token";
-
+    const isOauth = (props.clientId != undefined
+        && props.clientSecret != undefined
+        && props.grantType != undefined
+        && props.tokenEndpoint != undefined);
 
     const {resource, refetch } = useResource({
 
         fetch: async (link) => {
 
-            const tokenData = await fetch(tokenEndpoint, 
-              {
-                method: 'POST',
-                body: 'grant_type=' + grantType + '&client_id=' + clientId + '&client_secret=' + clientSecret,
-                headers: {
-                  'Content-Type': 'application/x-www-form-urlencoded'
-                }
-              }).then(response => response.json());
-        
-            const token = tokenData.access_token;
-        
-            // console.log('token: ' + token);
+            let token = undefined;
+            let addressData = undefined;
 
-            // const addressData = await fetch( // Request addressData using an apiKey
-            //         link,
-            //     {
-            //       headers: {
-            //         'x-api-key': props.apiKey,
-            //         'Accept': 'application/json',
-            //         'Content-Type': 'application/json'
-            //       }
-            //     }
-            //   ).then(response => response.json());
-        
-            const addressData = await fetch( // Request addressData using the access token
-                link,
-                {
-                  headers: {
-                    'Authorization': 'Bearer ' + token,
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                  }
-                }
-              ).then(response => response.json());
-        
-            // console.log('addressData: ' + JSON.stringify(addressData));
+            // Obtain Oauth2 access taken
+            if (isOauth) {
+                const tokenData = await fetch(props.tokenEndpoint,
+                    {
+                        method: 'POST',
+                        body: 'grant_type=' + props.grantType + '&client_id=' + props.clientId + '&client_secret=' + props.clientSecret,
+                        headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                        }
+                    }).then(response => response.json());
+
+                    token = tokenData.access_token;
+
+                // Request addressData using the access token
+                addressData = await fetch(link,
+                    {
+                        headers: {
+                            'Authorization': 'Bearer ' + token,
+                            'Accept': 'application/json',
+                            'Content-Type': 'application/json'
+                        }
+                    }
+                    ).then(response => response.json());
+            }
+
+            if (!isOauth && props.apiKey != undefined) {
+
+                // Request addressData using an apiKey
+                addressData = await fetch(link,
+                    {
+                    headers: {
+                        'x-api-key': props.apiKey,
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                    }
+                    }
+                ).then(response => response.json());
+
+            }
 
             setTotalItems(addressData.totalCount);
 
@@ -125,11 +125,9 @@ const AddressTable = () => {
             };
 
         },
-        link: addressEndpoint,
+        link: props.addressEndpoint,
         variables: {search: value, rows: delta, offset: offset, sort: column, order: direction},
     });
-
-    // console.log('resource: ' + JSON.stringify(resource));
 
     return (
         <>
@@ -168,7 +166,7 @@ const AddressTable = () => {
                         <Head items={columns}>
                             {(column) => <Cell key={column.key} sortable>{column.label}</Cell>}
                         </Head>
-                        {resource && resource.length > 1 && (
+                        {resource && resource.length > 0 && (
                             <Body items={resource}>
                                 {(row) => (
                                     <Row id={row['id']} onClick={handleSelect} items={columns} property={JSON.stringify(row)} >
@@ -177,13 +175,21 @@ const AddressTable = () => {
                                 )}
                             </Body>
                         )}
-
                     </Table>
     
                 </div>
             </ClayIconSpriteContext.Provider>
         </>
     );
+};
+
+AddressTable.propTypes = {
+    addressEndpoint: PropTypes.string, 
+    apiKey: PropTypes.string,
+    clientId: PropTypes.string,
+    clientSecret: PropTypes.string,
+    grantType: PropTypes.string,
+    tokenEndpoint: PropTypes.string,
 };
 
 export default AddressTable;
