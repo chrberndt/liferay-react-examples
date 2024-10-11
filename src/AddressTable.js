@@ -3,6 +3,7 @@ import { Body, Cell, Head, Icon, Provider, Row, Table } from '@clayui/core';
 import { useResource } from '@clayui/data-provider';
 import { ClayIconSpriteContext } from '@clayui/icon';
 import icons from './icons.svg';
+import ClayLoadingIndicator from '@clayui/loading-indicator';
 import { ClayPaginationBarWithBasicItems } from '@clayui/pagination-bar';
 import PropTypes from 'prop-types';
 
@@ -60,6 +61,7 @@ const AddressTable = ({...props}) => {
     const [column, setColumn] = useState('');
     const [direction, setDirection] = useState('');
     const [delta, setDelta] = useState(10);
+    const [loading, setLoading] = useState(true);
     const [offset, setOffset] = useState(0);
     const [page, setPage] = useState(1);
     const [totalItems, setTotalItems] = useState(0);
@@ -76,6 +78,8 @@ const AddressTable = ({...props}) => {
 
             let token = undefined;
             let addressData = undefined;
+
+            setLoading(true);
 
             // Obtain Oauth2 access taken
             if (isOauth) {
@@ -100,6 +104,16 @@ const AddressTable = ({...props}) => {
                         }
                     }
                     ).then(response => response.json());
+
+                setTotalItems(addressData.totalCount);
+
+                setLoading(false);
+
+                return {
+                    cursor: addressData.totalCount,
+                    items: addressData.items,
+                };
+
             }
 
             if (!isOauth && props.apiKey != undefined) {
@@ -115,14 +129,16 @@ const AddressTable = ({...props}) => {
                     }
                 ).then(response => response.json());
 
+                setLoading(false);
+
+                setTotalItems(addressData.totalRecords);
+
+                return {
+                    cursor: addressData.totalRecords,
+                    items: addressData.results,
+                };
+
             }
-
-            setTotalItems(addressData.totalCount);
-
-            return {
-                cursor: addressData.totalCount,
-                items: addressData.items,
-            };
 
         },
         link: props.addressEndpoint,
@@ -160,22 +176,30 @@ const AddressTable = ({...props}) => {
                         onActiveChange={(value) => handlePageChange(value)}
                         totalItems={totalItems}
                     />
+                    {!loading && (
+                        <>
+                            <Table onSortChange={handleSortChange}>
 
-                    <Table onSortChange={handleSortChange}>
-
-                        <Head items={columns}>
-                            {(column) => <Cell key={column.key} sortable>{column.label}</Cell>}
-                        </Head>
-                        {resource && resource.length > 0 && (
-                            <Body items={resource}>
-                                {(row) => (
-                                    <Row id={row['id']} onClick={handleSelect} items={columns} property={JSON.stringify(row)} >
-                                        {(column) => <Cell>{row[column.key]}</Cell>}
-                                    </Row>
+                                <Head items={columns}>
+                                    {(column) => <Cell key={column.key} sortable>{column.label}</Cell>}
+                                </Head>
+                                {resource && resource.length > 0 && (
+                                    <Body items={resource}>
+                                        {(row) => (
+                                            <Row id={row['id']} onClick={handleSelect} items={columns} property={JSON.stringify(row)} >
+                                                {(column) => <Cell>{row[column.key]}</Cell>}
+                                            </Row>
+                                        )}
+                                    </Body>
                                 )}
-                            </Body>
-                        )}
-                    </Table>
+                            </Table>
+                        </>
+                    )}
+                    {loading && (
+                        <ClayLoadingIndicator />
+                    )}
+
+
 
                 </div>
             </ClayIconSpriteContext.Provider>
