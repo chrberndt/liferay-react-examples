@@ -28,7 +28,7 @@ const Autocomplete = () => {
     );
     const { resource } = useResource({
         fetchPolicy: FetchPolicy.CacheFirst,
-        link: 'https://rickandmortyapi.com/api/character/',
+        link: 'https://rickandmortyapi.com/api/character',
         onNetworkStatusChange: setNetworkStatus,
         variables: { name: value },
     });
