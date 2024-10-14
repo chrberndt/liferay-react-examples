@@ -4,7 +4,6 @@ import { FetchPolicy, NetworkStatus, useResource } from '@clayui/data-provider';
 import DropDown from '@clayui/drop-down';
 import {useDebounce} from '@clayui/shared';
 
-
 const Autocomplete = () => {
 
     const LoadingWithDebounce = ({
@@ -22,6 +21,7 @@ const Autocomplete = () => {
     };
 
     const [value, setValue] = useState('');
+    const [visible, setVisible] = useState(false);
     const [networkStatus, setNetworkStatus] = useState(
         // const [networkStatus, setNetworkStatus] = useState<NetworkStatus>(
         NetworkStatus.Unused
@@ -49,12 +49,18 @@ const Autocomplete = () => {
                                 onChange={(event) =>
                                     setValue(event.target.value)
                                 }
+                                onFocus={(event) => {
+                                    setVisible(true)
+                                }}
+                                onBlur={(event) => {
+                                    setVisible(false)
+                                }}
                                 value={value}
                             />
 
                             <ClayAutocomplete.DropDown
                                 active={
-                                    (!!resource && !!value) || initialLoading
+                                    (!!resource && !!value) || visible
                                 }
                             >
                                 <DropDown.ItemList>
